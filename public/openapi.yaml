@@ -1,0 +1,268 @@
+openapi: 3.0.3
+info:
+  title: AnnSathi v2 Customer API
+  description: Multi-tenant, versioned customer-facing seating session, menu catalog, and ordering API.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local Dev Server
+paths:
+  /sessions/start:
+    post:
+      summary: Start a customer seating session
+      description: Initializes a session for a table, room, or parcel order. Returns a unique session token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - session_type
+                - sessionable_id
+              properties:
+                session_type:
+                  type: string
+                  enum: [table, room, parcel]
+                sessionable_id:
+                  type: integer
+                  description: ID of the table, room, or parcel counter
+                customer_name:
+                  type: string
+                  default: Guest
+                customer_phone:
+                  type: string
+                pax_count:
+                  type: integer
+                  default: 1
+                shift_id:
+                  type: integer
+      responses:
+        '201':
+          description: Session started successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      session_token:
+                        type: string
+                      session:
+                        type: object
+
+  /sessions/validate:
+    post:
+      summary: Validate a session token
+      description: Verifies whether a given session token is active.
+      parameters:
+        - name: X-Session-Token
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_token:
+                  type: string
+      responses:
+        '200':
+          description: Session is active
+        '404':
+          description: Session is invalid or closed
+
+  /sessions/join:
+    post:
+      summary: Join an existing session
+      description: Allows secondary customers to join a primary seating session via token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - session_token
+                - customer_name
+              properties:
+                session_token:
+                  type: string
+                customer_name:
+                  type: string
+                customer_phone:
+                  type: string
+      responses:
+        '201':
+          description: Joined successfully
+
+  /sessions/call-waiter:
+    post:
+      summary: Call a waiter
+      description: Alerts waiters/managers that help is requested at the session's location.
+      parameters:
+        - name: X-Session-Token
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Waiter alert dispatched
+
+  /sessions/request-bill:
+    post:
+      summary: Request final bill
+      description: Flags the table session status as bill_requested so staff can generate the invoice.
+      parameters:
+        - name: X-Session-Token
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bill request sent
+
+  /menu:
+    get:
+      summary: Fetch the complete menu
+      description: Returns all active categories with their available items and variants.
+      responses:
+        '200':
+          description: Menu retrieved successfully
+
+  /menu/categories:
+    get:
+      summary: Fetch active categories
+      description: Returns a list of active menu categories.
+      responses:
+        '200':
+          description: Success
+
+  /menu/items/{id}/availability:
+    get:
+      summary: Check item availability
+      description: Checks if a menu item is currently available.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+
+  /orders:
+    post:
+      summary: Place a new order
+      description: Places an order with multiple items and variant options. Resolves details via session token.
+      parameters:
+        - name: X-Session-Token
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - items
+              properties:
+                service_type:
+                  type: string
+                  enum: [dine_in, room_service, parcel, manual]
+                customer_session_id:
+                  type: integer
+                assigned_waiter_id:
+                  type: integer
+                discount_type:
+                  type: string
+                  enum: [flat, percent]
+                discount_value:
+                  type: number
+                notes:
+                  type: string
+                shift_id:
+                  type: integer
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - menu_item_id
+                      - quantity
+                    properties:
+                      menu_item_id:
+                        type: integer
+                      selected_variant_id:
+                        type: integer
+                      quantity:
+                        type: integer
+                      notes:
+                        type: string
+      responses:
+        '201':
+          description: Order placed successfully
+
+  /orders/{id}:
+    get:
+      summary: View order details
+      description: Fetches order totals, items, and status transition logs.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: X-Session-Token
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+
+  /orders/{id}/cancel:
+    post:
+      summary: Cancel a pending order
+      description: Cancels an order and reverses any stock allocations.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: X-Session-Token
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reason
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Order cancelled successfully
