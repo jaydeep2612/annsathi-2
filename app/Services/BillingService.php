@@ -73,6 +73,8 @@ class BillingService
                 'created_at' => now(),
             ]);
 
+            app(\App\Domains\Accounting\Services\AccountingService::class)->postInvoice($invoice);
+
             return $invoice;
         });
     }

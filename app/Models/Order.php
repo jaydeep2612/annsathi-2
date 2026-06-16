@@ -20,6 +20,7 @@ class Order extends Model
         'restaurant_id',
         'branch_id',
         'customer_session_id',
+        'customer_id',
         'service_type',
         'status',
         'payment_status',
@@ -116,5 +117,22 @@ class Order extends Model
     public function invoice(): HasOne
     {
         return $this->hasOne(Invoice::class);
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function orderPromotions(): HasMany
+    {
+        return $this->hasMany(OrderPromotion::class);
+    }
+
+    public function promotions()
+    {
+        return $this->belongsToMany(Promotion::class, 'order_promotions')
+            ->withPivot('discount_amount')
+            ->withTimestamps();
     }
 }

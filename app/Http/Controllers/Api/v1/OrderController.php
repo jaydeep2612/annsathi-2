@@ -17,6 +17,28 @@ class OrderController extends BaseApiController
     }
 
     /**
+     * List branch orders.
+     */
+    public function index(Request $request): JsonResponse
+    {
+        $restaurantId = app('tenant.restaurant_id');
+        $branchId = app('tenant.branch_id');
+
+        $orders = Order::where('restaurant_id', $restaurantId)
+            ->where('branch_id', $branchId)
+            ->when($request->query('status'), function ($q, $status) {
+                $q->where('status', $status);
+            })
+            ->when($request->query('payment_status'), function ($q, $paymentStatus) {
+                $q->where('payment_status', $paymentStatus);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate($request->query('per_page', 15));
+
+        return $this->successResponse($orders, 'Orders retrieved successfully');
+    }
+
+    /**
      * Place a new order.
      */
     public function store(Request $request): JsonResponse

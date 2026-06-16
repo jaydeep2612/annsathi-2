@@ -7,13 +7,15 @@ use App\Models\Traits\BelongsToRestaurant;
 use App\Models\Traits\HasBranch;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @mixin IdeHelperGoodsReceipt
  */
 class GoodsReceipt extends Model
 {
-    use BelongsToRestaurant, HasBranch;
+    use BelongsToRestaurant, HasBranch, LogsActivity;
 
     protected $fillable = [
         'purchase_order_id',
@@ -47,5 +49,13 @@ class GoodsReceipt extends Model
     public function items(): HasMany
     {
         return $this->hasMany(GoodsReceiptItem::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
     }
 }

@@ -8,13 +8,15 @@ use App\Models\Traits\HasBranch;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @mixin IdeHelperPurchaseOrder
  */
 class PurchaseOrder extends Model
 {
-    use BelongsToRestaurant, HasBranch, SoftDeletes;
+    use BelongsToRestaurant, HasBranch, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'restaurant_id',
@@ -51,5 +53,13 @@ class PurchaseOrder extends Model
     public function goodsReceipts(): HasMany
     {
         return $this->hasMany(GoodsReceipt::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
     }
 }

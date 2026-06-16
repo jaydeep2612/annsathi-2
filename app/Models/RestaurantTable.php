@@ -37,6 +37,15 @@ class RestaurantTable extends Model
         'is_active' => 'boolean',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function ($table) {
+            if (empty($table->qr_token)) {
+                $table->qr_token = 'TBL-' . strtoupper(\Illuminate\Support\Str::random(12));
+            }
+        });
+    }
+
     public function tableGroup(): BelongsTo
     {
         return $this->belongsTo(TableGroup::class);
