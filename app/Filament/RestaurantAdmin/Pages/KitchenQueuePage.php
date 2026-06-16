@@ -18,6 +18,11 @@ class KitchenQueuePage extends Page
     protected static ?string $navigationGroup = 'POS & Orders';
     protected static ?int $navigationSort = 3;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_super_admin || auth()->user()->hasPermissionTo('update_kitchen_status');
+    }
+
     protected static string $view = 'filament.restaurant-admin.pages.kitchen-queue-page';
 
     public function getActiveTickets()

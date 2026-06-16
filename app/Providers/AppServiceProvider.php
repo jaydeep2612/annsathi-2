@@ -52,6 +52,45 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(ApprovalApproved::class, CreateActivityLogListener::class);
         Event::listen(ShiftClosed::class, CreateActivityLogListener::class);
 
+        // Register Generic policies for models
+        $mappings = [
+            \App\Models\Branch::class => 'manage_branches',
+            \App\Models\User::class => 'manage_users',
+            \Spatie\Permission\Models\Role::class => 'manage_users',
+            \App\Models\MenuItem::class => 'manage_menu',
+            \App\Models\Category::class => 'manage_menu',
+            \App\Models\ItemVariantGroup::class => 'manage_menu',
+            \App\Models\ItemVariant::class => 'manage_menu',
+            \App\Models\Recipe::class => 'manage_menu',
+            \App\Models\RecipeVersion::class => 'manage_menu',
+            \App\Models\GroceryItem::class => 'manage_inventory',
+            \App\Models\Warehouse::class => 'manage_inventory',
+            \App\Models\PurchaseOrder::class => 'manage_inventory',
+            \App\Models\GoodsReceipt::class => 'manage_inventory',
+            \App\Models\Supplier::class => 'manage_suppliers',
+            \App\Models\SupplierLedger::class => 'manage_suppliers',
+            \App\Models\Order::class => 'place_manual_orders',
+            \App\Models\Reservation::class => 'place_manual_orders',
+            \App\Models\Refund::class => 'approve_refunds',
+            \App\Models\ApprovalRequest::class => 'approve_refunds',
+            \App\Models\Shift::class => 'manage_shifts',
+            \App\Models\CashDrawer::class => 'manage_shifts',
+            \App\Models\CashMovement::class => 'manage_shifts',
+            \App\Models\Printer::class => 'manage_settings',
+            \App\Models\PrinterGroup::class => 'manage_settings',
+            \App\Models\PrinterRoute::class => 'manage_settings',
+            \App\Models\Restaurant::class => 'manage_settings',
+            \App\Models\RestaurantTable::class => 'manage_settings',
+            \App\Models\TaxGroup::class => 'manage_settings',
+            \App\Models\TaxRate::class => 'manage_settings',
+            \App\Models\Account::class => 'manage_settings',
+            \App\Models\JournalEntry::class => 'manage_settings',
+        ];
+
+        foreach (array_keys($mappings) as $model) {
+            \Illuminate\Support\Facades\Gate::policy($model, \App\Policies\GenericPolicy::class);
+        }
+
         // Profile queries and log queries taking longer than 500ms
         DB::listen(function ($query) {
             if ($query->time > 500) {

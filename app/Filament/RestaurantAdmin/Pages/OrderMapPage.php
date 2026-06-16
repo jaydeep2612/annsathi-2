@@ -18,6 +18,11 @@ class OrderMapPage extends Page
     protected static ?string $navigationGroup = 'POS & Orders';
     protected static ?int $navigationSort = 2;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_super_admin || auth()->user()->hasPermissionTo('confirm_orders');
+    }
+
     protected static string $view = 'filament.restaurant-admin.pages.order-map-page';
 
     public function getActiveOrders()

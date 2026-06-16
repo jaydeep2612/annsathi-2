@@ -28,8 +28,8 @@ class KitchenPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Orange,
             ])
-            ->discoverResources(in: app_path('Filament/Kitchen/Resources'), for: 'App\\Filament\\Kitchen\\Resources')
-            ->discoverPages(in: app_path('Filament/Kitchen/Pages'), for: 'App\\Filament\\Kitchen\\Pages')
+            ->discoverResources(in: app_path('Filament/RestaurantAdmin/Resources'), for: 'App\\Filament\\RestaurantAdmin\\Resources')
+            ->discoverPages(in: app_path('Filament/RestaurantAdmin/Pages'), for: 'App\\Filament\\RestaurantAdmin\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])

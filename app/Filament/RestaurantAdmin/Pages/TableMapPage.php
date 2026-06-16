@@ -25,6 +25,11 @@ class TableMapPage extends Page implements HasForms
     protected static ?string $navigationGroup = 'Seating & Reservations';
     protected static ?int $navigationSort = 3;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_super_admin || auth()->user()->hasPermissionTo('place_manual_orders');
+    }
+
     protected static string $view = 'filament.restaurant-admin.pages.table-map-page';
 
     public function getTables()

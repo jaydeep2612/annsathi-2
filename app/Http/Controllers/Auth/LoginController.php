@@ -71,31 +71,30 @@ class LoginController extends Controller
      */
     protected function redirectUser($user)
     {
-        if ($user->is_super_admin) {
-            return redirect()->intended('/super-admin');
+        $targetPath = '/admin';
+
+        if ($user->is_super_admin || $user->hasRole('super_admin')) {
+            $targetPath = '/super-admin';
+        } elseif ($user->hasRole('restaurant_admin')) {
+            $targetPath = '/restaurant-admin';
+        } elseif ($user->hasRole('manager')) {
+            $targetPath = '/manager';
+        } elseif ($user->hasRole('chef')) {
+            $targetPath = '/kitchen';
+        } elseif ($user->hasRole('waiter')) {
+            $targetPath = '/waiter';
         }
 
-        if ($user->hasRole('super_admin')) {
-            return redirect()->intended('/super-admin');
+        $intended = session()->get('url.intended');
+
+        if ($intended) {
+            $intendedPath = parse_url($intended, PHP_URL_PATH);
+            if ($intendedPath && str_starts_with($intendedPath, $targetPath)) {
+                return redirect()->intended($targetPath);
+            }
+            session()->forget('url.intended');
         }
 
-        if ($user->hasRole('restaurant_admin')) {
-            return redirect()->intended('/restaurant-admin');
-        }
-
-        if ($user->hasRole('manager')) {
-            return redirect()->intended('/manager');
-        }
-
-        if ($user->hasRole('chef')) {
-            return redirect()->intended('/kitchen');
-        }
-
-        if ($user->hasRole('waiter')) {
-            return redirect()->intended('/waiter');
-        }
-
-        // Default fallback if no specific role matches
-        return redirect()->intended('/admin');
+        return redirect($targetPath);
     }
 }

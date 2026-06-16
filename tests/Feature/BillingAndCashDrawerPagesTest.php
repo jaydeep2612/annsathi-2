@@ -55,6 +55,8 @@ class BillingAndCashDrawerPagesTest extends TestCase
         app()->bind('tenant.restaurant_id', fn() => $this->restaurant->id);
         app()->bind('tenant.branch_id', fn() => $this->branch->id);
 
+        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+
         $this->manager = User::create([
             'restaurant_id' => $this->restaurant->id,
             'branch_id' => $this->branch->id,
@@ -63,6 +65,8 @@ class BillingAndCashDrawerPagesTest extends TestCase
             'password' => bcrypt('password'),
             'is_active' => true,
         ]);
+
+        $this->manager->assignRole('manager');
 
         $this->actingAs($this->manager);
     }

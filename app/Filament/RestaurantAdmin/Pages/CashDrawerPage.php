@@ -18,6 +18,11 @@ class CashDrawerPage extends Page
     protected static ?string $navigationGroup = 'Billing & Finance';
     protected static ?int $navigationSort = 4;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_super_admin || auth()->user()->hasPermissionTo('manage_shifts');
+    }
+
     protected static string $view = 'filament.restaurant-admin.pages.cash-drawer-page';
 
     // Open Shift Form Properties

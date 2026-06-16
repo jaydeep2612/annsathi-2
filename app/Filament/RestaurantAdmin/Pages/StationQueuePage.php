@@ -18,6 +18,11 @@ class StationQueuePage extends Page
     protected static ?string $navigationGroup = 'POS & Orders';
     protected static ?int $navigationSort = 4;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_super_admin || auth()->user()->hasPermissionTo('update_kitchen_status');
+    }
+
     protected static string $view = 'filament.restaurant-admin.pages.station-queue-page';
 
     public ?int $selectedStationId = null;

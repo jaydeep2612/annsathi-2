@@ -28,8 +28,8 @@ class WaiterPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Rose,
             ])
-            ->discoverResources(in: app_path('Filament/Waiter/Resources'), for: 'App\\Filament\\Waiter\\Resources')
-            ->discoverPages(in: app_path('Filament/Waiter/Pages'), for: 'App\\Filament\\Waiter\\Pages')
+            ->discoverResources(in: app_path('Filament/RestaurantAdmin/Resources'), for: 'App\\Filament\\RestaurantAdmin\\Resources')
+            ->discoverPages(in: app_path('Filament/RestaurantAdmin/Pages'), for: 'App\\Filament\\RestaurantAdmin\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])

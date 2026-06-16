@@ -19,7 +19,7 @@ class PrinterRouteResource extends Resource
 {
     protected static ?string $model = PrinterRoute::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-trend-down';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
     protected static ?string $navigationLabel = 'Printer Routes';
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $modelLabel = 'Printer Route';

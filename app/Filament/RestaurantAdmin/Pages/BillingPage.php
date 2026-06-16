@@ -22,6 +22,11 @@ class BillingPage extends Page
     protected static ?string $navigationGroup = 'POS & Orders';
     protected static ?int $navigationSort = 1;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_super_admin || auth()->user()->hasPermissionTo('record_payments');
+    }
+
     protected static string $view = 'filament.restaurant-admin.pages.billing-page';
 
     public $selectedOrderId = null;

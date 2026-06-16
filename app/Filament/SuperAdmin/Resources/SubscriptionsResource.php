@@ -79,7 +79,8 @@ class SubscriptionsResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\ToggledFilter::make('is_active'),
+                Tables\Filters\TernaryFilter::make('is_active')
+                    ->label('Active Status'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

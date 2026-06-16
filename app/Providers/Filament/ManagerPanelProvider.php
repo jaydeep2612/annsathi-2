@@ -28,8 +28,8 @@ class ManagerPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Blue,
             ])
-            ->discoverResources(in: app_path('Filament/Manager/Resources'), for: 'App\\Filament\\Manager\\Resources')
-            ->discoverPages(in: app_path('Filament/Manager/Pages'), for: 'App\\Filament\\Manager\\Pages')
+            ->discoverResources(in: app_path('Filament/RestaurantAdmin/Resources'), for: 'App\\Filament\\RestaurantAdmin\\Resources')
+            ->discoverPages(in: app_path('Filament/RestaurantAdmin/Pages'), for: 'App\\Filament\\RestaurantAdmin\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
